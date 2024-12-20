@@ -16,3 +16,17 @@ const readData = (): Category[] => {
 const writeData = (data: Category[]) => {
     fs.writeFileSync(categoriesFile, JSON.stringify(data, null, 2));
 };
+
+router.get('/', (req, res) => {
+    const categories = readData();
+    res.json(categories.map((cat: Category) => ({id: cat.id, name: cat.name})));
+});
+router.get('/:id', (req, res) => {
+    const categories = readData();
+    const category = categories.find(cat => cat.id === parseInt(req.params.id));
+    if (category) {
+        res.json(category);
+    } else {
+        res.status(404).json({message: 'Category not found'});
+    }
+});

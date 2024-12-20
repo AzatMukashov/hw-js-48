@@ -1,6 +1,5 @@
 import express from "express";
 import fs from "fs";
-
 const router = express.Router();
 const categoriesFile = './data/categories.json';
 
@@ -18,7 +17,7 @@ const writeData = (data: Category[]) => {
     fs.writeFileSync(categoriesFile, JSON.stringify(data, null, 2));
 };
 
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
     const categories = readData();
     res.json(categories.map((cat: Category) => ({id: cat.id, name: cat.name})));
 });
@@ -55,3 +54,18 @@ router.delete('/:id', (req, res) => {
         res.status(404).json({message: 'Category not found'});
     }
 });
+
+router.put('/:id', (req, res) => {
+    let categories = readData();
+    const categoryIndex = categories.findIndex(cat => cat.id === parseInt(req.params.id));
+    if (categoryIndex !== -1) {
+        categories[categoryIndex].name = req.body.name;
+        categories[categoryIndex].description = req.body.description || '';
+        writeData(categories);
+        res.json(categories[categoryIndex]);
+    } else {
+        res.status(404).json({message: 'Category not found'});
+    }
+});
+
+export default router;

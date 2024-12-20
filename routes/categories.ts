@@ -1,5 +1,6 @@
 import express from "express";
 import fs from "fs";
+
 const router = express.Router();
 const categoriesFile = './data/categories.json';
 
@@ -41,4 +42,16 @@ router.post('/', (req, res) => {
     categories.push(newCategory);
     writeData(categories);
     res.status(201).json(newCategory);
+});
+
+router.delete('/:id', (req, res) => {
+    let categories = readData();
+    const categoryIndex = categories.findIndex(cat => cat.id === parseInt(req.params.id));
+    if (categoryIndex !== -1) {
+        categories.splice(categoryIndex, 1);
+        writeData(categories);
+        res.json({message: 'Category deleted'});
+    } else {
+        res.status(404).json({message: 'Category not found'});
+    }
 });

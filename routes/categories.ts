@@ -30,3 +30,15 @@ router.get('/:id', (req, res) => {
         res.status(404).json({message: 'Category not found'});
     }
 });
+
+router.post('/', (req, res) => {
+    const categories = readData();
+    const newCategory: Category = {
+        id: categories.length > 0 ? categories[categories.length - 1].id + 1 : 1,
+        name: req.body.name,
+        description: req.body.description || ''
+    };
+    categories.push(newCategory);
+    writeData(categories);
+    res.status(201).json(newCategory);
+});
